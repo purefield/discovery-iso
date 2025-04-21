@@ -52,13 +52,25 @@ gather_network_info() {
 gather_disk_info() {
   LOG "Gathering Disk Info"
   echo "disks:" >> "$FACTS_FILE"
-  for disk in $(lsblk -dn -o NAME); do
+
+  for disk in $(lsblk -dno NAME,TYPE | awk '$2 == "disk" { print $1 }'); do
     path="/dev/$disk"
+    model=$(cat /sys/block/$disk/device/model 2>/dev/null)
+    type=$(cat /sys/block/$disk/queue/rotational | grep -q 0 && echo 'ssd' || echo 'hdd')
+
+    # Identify NVMe specifically
+    if [[ "$disk" == nvme* ]]; then
+      type="nvme"
+    fi
+
+    # Skip devices with empty model (e.g., loop, ram)
+    [[ -z "$model" ]] && continue
+
     echo "  - path: $path" >> "$FACTS_FILE"
     echo "    size: $(lsblk -dn -o SIZE $path)" >> "$FACTS_FILE"
-    echo "    type: $(cat /sys/block/$disk/queue/rotational | grep -q 0 && echo 'ssd' || echo 'hdd')" >> "$FACTS_FILE"
+    echo "    type: $type" >> "$FACTS_FILE"
     echo "    interface: $(udevadm info --query=property --name=$path | grep ID_BUS | cut -d= -f2)" >> "$FACTS_FILE"
-    echo "    model: $(cat /sys/block/$disk/device/model 2>/dev/null)" >> "$FACTS_FILE"
+    echo "    model: $model" >> "$FACTS_FILE"
     echo "    serial: $(udevadm info --query=property --name=$path | grep ID_SERIAL_SHORT | cut -d= -f2)" >> "$FACTS_FILE"
   done
 }
