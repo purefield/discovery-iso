@@ -107,7 +107,7 @@ systemd:
         ExecStartPre=/usr/bin/mkdir -p /mnt/iso
         ExecStartPre=/usr/bin/mount -o ro /dev/disk/by-label/$volid /mnt/iso
         ExecStartPre=/usr/bin/podman load -i /mnt/iso/opt/images/coreos-diagnostic.oci
-        ExecStart=/usr/bin/podman run --expose=80/tcp -P --privileged --net=host --pid=host --volume=/var:/data  -w /data localhost/coreos-diagnostic
+        ExecStart=/usr/bin/podman run -p 80 --privileged --net=host --pid=host --volume=/var:/data -w /data localhost/coreos-diagnostic
         Restart=always
         RestartSec=10
 
