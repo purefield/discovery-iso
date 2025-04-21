@@ -115,7 +115,8 @@ systemd:
           contents: |
             [Service]
             ExecStart=
-            ExecStart=/usr/bin/bash -c 'sleep 2; clear; echo "=== Host Diagnostics ==="; echo; cat /host/tmp/diagnostics.txt 2>/dev/null || echo "(data not yet available)"; echo; echo "Press ENTER to continue to nmtui..."; read; exec nmtui'
+            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; echo ""; for i in {1..3}; do echo "Waiting for diagnostic container... ($i/3)"; sleep 2; done; echo ""; echo "=== Diagnostics Output ==="; cat /host/tmp/host_facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; exec nmtui'
+
 
 storage:
   files:
