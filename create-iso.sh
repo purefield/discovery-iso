@@ -31,7 +31,7 @@ EOF
 
 cat <<'EOF'> gather_facts.sh
 #!/bin/bash
-FACTS_FILE="/data/network.txt"
+FACTS_FILE="/data/facts.yaml"
 LOG_FILE="/data/boot-diag.log"
 LOG() {
     echo "[BOOT-STEP] $1" | tee -a "$LOG_FILE"
@@ -66,7 +66,7 @@ gather_disk_info() {
 serve_data() {
   LOG "Serving data over HTTP on port 80"
   while true; do
-    echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/yaml\r\n\r\n$(cat $FACTS_FILE)" | nc -l -p 80 -q 1
+    echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/yaml\r\n\r\n$(cat $FACTS_FILE)" | nc -l -p 80 -s 0.0.0.0 -q 1
   done
 }
 
@@ -107,7 +107,7 @@ systemd:
         ExecStartPre=/usr/bin/mkdir -p /mnt/iso
         ExecStartPre=/usr/bin/mount -o ro /dev/disk/by-label/$volid /mnt/iso
         ExecStartPre=/usr/bin/podman load -i /mnt/iso/opt/images/coreos-diagnostic.oci
-        ExecStart=/usr/bin/podman run -p 80 --privileged --net=host --pid=host --volume=/var:/data -w /data localhost/coreos-diagnostic
+        ExecStart=/usr/bin/podman run --privileged --net=host --pid=host --volume=/var:/data -w /data localhost/coreos-diagnostic
         Restart=always
         RestartSec=10
 
@@ -120,7 +120,7 @@ systemd:
           contents: |
             [Service]
             ExecStart=
-            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; cat /var/network.txt; ls -rtla /var/host_facts.yaml; podman ps -a; echo ""; for i in {1..3}; do echo "Waiting for diagnostic container... ($i/3)"; sleep 2; done; echo ""; echo "=== Diagnostics Output ==="; cat /host/tmp/host_facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; exec bash'
+            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; cat /var/facts.yaml; echo ""; for i in {1..3}; do echo "Waiting for diagnostic container... ($i/3)"; sleep 2; done; echo ""; echo "=== Diagnostics Output ==="; cat /host/tmp/host_facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; exec bash'
 
 
 storage:
