@@ -25,6 +25,7 @@ FROM quay.io/fedora/fedora:latest
 RUN dnf install -y ethtool lsof iproute nmap-ncat NetworkManager iputils yq util-linux && \
     mkdir -p /app && dnf clean all
 COPY gather_facts.sh /app/
+RUN chmod 775 /app/gather_facts.sh
 CMD ["/app/gather_facts.sh"]
 EOF
 
