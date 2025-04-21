@@ -22,7 +22,7 @@ fi
 # --- Build diagnostic container ---
 cat <<'EOF'> Containerfile
 FROM quay.io/fedora/fedora:latest
-RUN dnf install -y ethtool lsof iproute nmap-ncat NetworkManager iputils yq util-linux && \
+RUN dnf install -y ethtool lsof iproute nmap-ncat NetworkManager iputils yq util-linux gawk && \
     mkdir -p /app && dnf clean all
 COPY gather_facts.sh /app/
 RUN chmod 775 /app/gather_facts.sh
@@ -56,6 +56,8 @@ gather_disk_info() {
     path="/dev/$disk"
     model=$(cat /sys/block/$disk/device/model 2>/dev/null)
     type=$(cat /sys/block/$disk/queue/rotational | grep -q 0 && echo 'ssd' || echo 'hdd')
+
+    LOG "$disk, $path, $model, $type"
 
     # Identify NVMe specifically
     if [[ "$disk" == nvme* ]]; then
