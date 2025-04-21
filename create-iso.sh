@@ -31,7 +31,7 @@ EOF
 
 cat <<'EOF'> gather_facts.sh
 #!/bin/bash
-FACTS_FILE="/data/host_facts.yaml"
+FACTS_FILE="/data/network.txt"
 LOG_FILE="/data/boot-diag.log"
 LOG() {
     echo "[BOOT-STEP] $1" | tee -a "$LOG_FILE"
