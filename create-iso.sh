@@ -44,7 +44,6 @@ gather_network_info() {
     echo "  - name: $iface" >> "$FACTS_FILE"
     echo "    mac_address: $(cat /sys/class/net/$iface/address)" >> "$FACTS_FILE"
     echo "    make_model: $(ethtool -i $iface 2>/dev/null | awk -F': ' '/driver|version/ {print $2}' | paste -sd ' ' -)" >> "$FACTS_FILE"
-    echo "    dhcp: $(nmcli device show $iface | grep -q 'IP4.DHCP4.OPTION' && echo true || echo false)" >> "$FACTS_FILE"
     ip addr show $iface | awk '/inet /{print "    ip_address: "$2}' >> "$FACTS_FILE"
   done
 }
@@ -132,7 +131,7 @@ systemd:
           contents: |
             [Service]
             ExecStart=
-            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; echo "";  echo ""; echo "=== Diagnostics Output ==="; cat /var/facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; exec nmtui; exec /bin/bash'
+            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; echo "";  echo ""; echo "=== Diagnostics Output ==="; cat /var/facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; nmtui; exec /bin/bash'
 
 
 storage:
