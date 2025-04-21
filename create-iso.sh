@@ -62,9 +62,6 @@ gather_disk_info() {
       type="nvme"
     fi
 
-    # Skip devices with empty model (e.g., loop, ram)
-    [[ -z "$model" ]] && continue
-
     echo "  - path: $path" >> "$FACTS_FILE"
     echo "    size: $(lsblk -dn -o SIZE $path)" >> "$FACTS_FILE"
     echo "    type: $type" >> "$FACTS_FILE"
