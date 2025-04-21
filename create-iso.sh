@@ -66,7 +66,7 @@ gather_disk_info() {
 serve_data() {
   LOG "Serving data over HTTP on port 80"
   while true; do
-    echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/yaml\r\n\r\n$(cat $FACTS_FILE)" | nc -l -p 80 -s 0.0.0.0 -q 1
+    echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/yaml\r\n\r\n$(cat $FACTS_FILE)" | nc -l -p 80
   done
 }
 
