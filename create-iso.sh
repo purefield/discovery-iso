@@ -1,6 +1,4 @@
 #!/bin/bash
-set -e
-
 # --- Requirements check ---
 command -v podman >/dev/null || { echo "podman is required"; exit 1; }
 command -v butane >/dev/null || { echo "butane is required"; exit 1; }
