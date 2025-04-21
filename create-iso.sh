@@ -31,8 +31,8 @@ EOF
 cat <<'EOF'> gather_facts.sh
 #!/bin/bash
 exit 0
-FACTS_FILE="/tmp/host_facts.yaml"
-LOG_FILE="/tmp/boot-diag.log"
+FACTS_FILE="/data/host_facts.yaml"
+LOG_FILE="/data/boot-diag.log"
 LOG() {
     echo "[BOOT-STEP] $1" | tee -a "$LOG_FILE"
 }
@@ -88,7 +88,8 @@ podman save --format oci-archive -o coreos-diagnostic.oci coreos-diagnostic
 mkdir -p iso-overlay/opt/images
 cp coreos-diagnostic.oci iso-overlay/opt/images/
 
-cat <<'EOF'> diagnostic.bu
+volid=$(isoinfo -d -i fedora-coreos.live.x86_64.iso | grep "Volume id" | awk -F ': ' '{print $2}')
+cat <<EOF> diagnostic.bu
 variant: fcos
 version: 1.5.0
 
@@ -103,8 +104,10 @@ systemd:
         Wants=network-online.target
 
         [Service]
-        ExecStartPre=/usr/bin/podman load -i /opt/images/coreos-diagnostic.oci
-        ExecStart=/usr/bin/podman run --privileged --net=host --pid=host --volume=/:/host localhost/coreos-diagnostic
+        ExecStartPre=/usr/bin/mkdir -p /mnt/iso
+        ExecStartPre=/usr/bin/mount -o ro /dev/disk/by-label/$volid /mnt/iso
+        ExecStartPre=/usr/bin/podman load -i /mnt/iso/opt/images/coreos-diagnostic.oci
+        ExecStart=/usr/bin/podman run --privileged --net=host --pid=host --volume=/var:/data -w /data localhost/coreos-diagnostic
         Restart=always
         RestartSec=10
 
@@ -117,7 +120,7 @@ systemd:
           contents: |
             [Service]
             ExecStart=
-            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; echo ""; for i in {1..3}; do echo "Waiting for diagnostic container... ($i/3)"; sleep 2; done; echo ""; echo "=== Diagnostics Output ==="; cat /host/tmp/host_facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; exec nmtui'
+            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; nmcli device show | grep ADDRESS; ls -rtla /var/; podman ps -a; echo ""; for i in {1..3}; do echo "Waiting for diagnostic container... ($i/3)"; sleep 2; done; echo ""; echo "=== Diagnostics Output ==="; cat /host/tmp/host_facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; exec nmtui'
 
 
 storage:
@@ -187,7 +190,6 @@ xorriso -as mkisofs \
 # Sanity Checks
 echo "Check Rebuilt ISO contains .oci image"
 xorriso -indev coreos-diagnostic-final.iso -find /opt/images -exec lsdl
-
 
 # --- Make ISO available to VM ---
 sudo cp coreos-diagnostic-final.iso /var/lib/libvirt/images/coreos-diagnostic.iso
