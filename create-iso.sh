@@ -120,7 +120,7 @@ systemd:
           contents: |
             [Service]
             ExecStart=
-            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; cat /var/facts.yaml; echo ""; for i in {1..3}; do echo "Waiting for diagnostic container... ($i/3)"; sleep 2; done; echo ""; echo "=== Diagnostics Output ==="; cat /host/tmp/host_facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; exec bash'
+            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; echo "";  echo ""; echo "=== Diagnostics Output ==="; cat /var/facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; exec nmtui; exec /bin/bash'
 
 
 storage:
