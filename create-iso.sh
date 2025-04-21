@@ -31,7 +31,6 @@ EOF
 
 cat <<'EOF'> gather_facts.sh
 #!/bin/bash
-exit 0
 FACTS_FILE="/data/host_facts.yaml"
 LOG_FILE="/data/boot-diag.log"
 LOG() {
@@ -121,7 +120,7 @@ systemd:
           contents: |
             [Service]
             ExecStart=
-            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; nmcli device show | grep ADDRESS; ls -rtla /var/host_facts.yaml; podman ps -a; echo ""; for i in {1..3}; do echo "Waiting for diagnostic container... ($i/3)"; sleep 2; done; echo ""; echo "=== Diagnostics Output ==="; cat /host/tmp/host_facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; exec bash'
+            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; cat /var/network.txt; ls -rtla /var/host_facts.yaml; podman ps -a; echo ""; for i in {1..3}; do echo "Waiting for diagnostic container... ($i/3)"; sleep 2; done; echo ""; echo "=== Diagnostics Output ==="; cat /host/tmp/host_facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; exec bash'
 
 
 storage:
