@@ -70,6 +70,7 @@ gather_disk_info() {
     echo "    interface: $(udevadm info --query=property --name=$path | grep ID_BUS | cut -d= -f2)" >> "$FACTS_FILE"
     echo "    model: $model" >> "$FACTS_FILE"
     echo "    serial: $(udevadm info --query=property --name=$path | grep ID_SERIAL_SHORT | cut -d= -f2)" >> "$FACTS_FILE"
+    echo "    wwn: $(lsblk -Mno wwn $path)" >> "$FACTS_FILE"
   done
 }
 
