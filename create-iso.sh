@@ -12,9 +12,10 @@ if [ ! -e coreos-installer ]; then
     chmod +x coreos-installer
 fi
 
-# --- Download Fedora CoreOS ISO ---
-if [ ! -e fedora-coreos.live.x86_64.iso ]; then
-    curl -o fedora-coreos.live.x86_64.iso https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/41.20250331.3.0/x86_64/fedora-coreos-41.20250331.3.0-live.x86_64.iso
+# --- Download CoreOS ISO ---
+if [ ! -e coreos.live.x86_64.iso ]; then
+    # curl -o coreos.live.x86_64.iso https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/41.20250331.3.0/x86_64/fedora-coreos-41.20250331.3.0-live.x86_64.iso
+    curl -o coreos.live.x86_64.iso https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/latest/rhcos-live.x86_64.iso
 fi
 
 # --- Build diagnostic container ---
@@ -97,7 +98,7 @@ podman save --format oci-archive -o coreos-diagnostic.oci coreos-diagnostic
 mkdir -p iso-overlay/opt/images
 cp coreos-diagnostic.oci iso-overlay/opt/images/
 
-volid=$(isoinfo -d -i fedora-coreos.live.x86_64.iso | grep "Volume id" | awk -F ': ' '{print $2}')
+volid=$(isoinfo -d -i coreos.live.x86_64.iso | grep "Volume id" | awk -F ': ' '{print $2}')
 cat <<EOF> diagnostic.bu
 variant: fcos
 version: 1.5.0
@@ -152,7 +153,7 @@ EOF
 butane -p -o config.ign diagnostic.bu
 
 # --- Embed Ignition config into ISO ---
-cp fedora-coreos.live.x86_64.iso coreos-diagnostic.iso
+cp coreos.live.x86_64.iso coreos-diagnostic.iso
 ./coreos-installer iso ignition embed -i config.ign coreos-diagnostic.iso
 
 # --- Inject overlay files ---
@@ -168,7 +169,7 @@ ISO_TIMESTAMP=$(date +"%Y-%m-%d %H:%M")
 # Inject the timestamp into the GRUB menu
 chmod +w iso-root/EFI/fedora/grub.cfg iso-root/isolinux/isolinux.cfg
 chmod +wx iso-root/EFI/fedora/ iso-root/isolinux/
-sed -i "s/Fedora CoreOS (Live)/Fedora CoreOS (Live) Diagnostics (Built: $ISO_TIMESTAMP)/g" iso-root/EFI/fedora/grub.cfg iso-root/isolinux/isolinux.cfg
+sed -i "s/CoreOS (Live)/CoreOS (Live) Diagnostics (Built: $ISO_TIMESTAMP)/g" iso-root/EFI/fedora/grub.cfg iso-root/isolinux/isolinux.cfg
 chmod -w iso-root/EFI/fedora/grub.cfg iso-root/isolinux/isolinux.cfg
 
 # Ensure Required Files Exist and Are Writable
