@@ -1,0 +1,24 @@
+FROM rockylinux:9
+
+# Enable EPEL, install tools with --allowerasing to resolve curl conflict
+RUN dnf install -y epel-release && \
+    dnf install -y \
+        podman \
+        butane \
+        coreos-installer \
+        mkisofs \
+        curl \
+        xorriso \
+        genisoimage \
+        gzip \
+        jq \
+        --allowerasing && \
+    dnf clean all
+WORKDIR /work
+COPY coreos-diagnostic.oci \
+     diagnostic.bu \
+     create-iso.sh \
+     gather_facts.sh \
+     /work
+
+ENTRYPOINT ["/usr/bin/bash"]

@@ -1,12 +1,9 @@
-Containerfile
 config.ign
 coreos-diagnostic-final.iso
 coreos-diagnostic.iso
 coreos-diagnostic.oci
 coreos-installer
-diagnostic.bu
 coreos.live.x86_64.iso
-gather_facts.sh
 iso-overlay/
 iso-root/
 sha256sum.txt
