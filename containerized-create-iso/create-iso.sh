@@ -3,12 +3,13 @@ set -euo pipefail
 mkdir build -p
 
 # --- Download CoreOS ISO ---
+cd $HOME/host/
 if [ ! -e coreos.live.x86_64.iso ]; then
     curl -o coreos.live.x86_64.iso https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/latest/rhcos-live.x86_64.iso
 fi
-cp coreos.live.x86_64.iso build/coreos-diagnostic.iso
+cp coreos.live.x86_64.iso ../build/coreos-diagnostic.iso
 
-cd build
+cd $HOME/build
 # --- Create Ignition config ---
 mkdir -p iso-overlay/opt/images
 cp $HOME/coreos-diagnostic.oci iso-overlay/opt/images/
