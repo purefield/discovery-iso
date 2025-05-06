@@ -17,8 +17,11 @@ RUN dnf install -y epel-release && \
 WORKDIR /work
 COPY coreos-diagnostic.oci \
      diagnostic.bu \
+     setup-network.ign \
      create-iso.sh \
-     gather_facts.sh \
+     gather-facts.sh \
+     format.sh \
+     setup-network.sh \
      /work
 
 ENTRYPOINT ["/usr/bin/bash"]

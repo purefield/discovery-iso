@@ -16,10 +16,10 @@ cp $HOME/coreos-diagnostic.oci iso-overlay/opt/images/
 
 volid=$(isoinfo -d -i coreos-diagnostic.iso | grep "Volume id" | awk -F ': ' '{print $2}')
 sed -i "s/VOLID/${volid}/g" $HOME/diagnostic.bu
-butane $HOME/diagnostic.bu -p -o config.ign
+butane $HOME/diagnostic.bu -p -o diagnostic.ign
 
 # --- Embed Ignition config into ISO ---
-coreos-installer iso ignition embed -i config.ign coreos-diagnostic.iso
+coreos-installer iso ignition embed -i diagnostic.ign coreos-diagnostic.iso
 
 # --- Inject overlay files ---
 mkdir -p iso-root
@@ -65,5 +65,6 @@ xorriso -as mkisofs \
 # Sanity Checks
 echo "Check Rebuilt ISO contains .oci image"
 xorriso -indev coreos-diagnostic-final.iso -find /opt/images -exec lsdl
+echo "Check Rebuilt ISO contains setup-network.sh"
+xorriso -indev coreos-diagnostic-final.iso -find /usr/local/bin -exec lsdl
 cp coreos-diagnostic-final.iso ../host/coreos-diagnostic.iso
-

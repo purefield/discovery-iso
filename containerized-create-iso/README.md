@@ -1,3 +1,3 @@
-./build.gather_facts.sh
+./build.diagnostic.sh
 ./build.discovery-iso.sh
 ./run.sh

@@ -28,7 +28,7 @@ systemd:
           contents: |
             [Service]
             ExecStart=
-            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; echo "";  echo ""; echo "=== Diagnostics Output ==="; cat /var/facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; nmtui; exec /bin/bash'
+            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; echo "";  echo ""; echo "=== Diagnostics Output ==="; cat /var/facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; nmtui; echo "Configure networking using setup-network.sh"; echo; exec /bin/bash'
 
 
 storage:
@@ -40,6 +40,10 @@ storage:
         inline: |
           === CoreOS Diagnostics ===
           Will auto-run container + nmtui
+    - path: /usr/local/bin/setup-network.sh
+      mode: 775
+      contents:
+        source: "data:text/plain;base64,${BASE64STRING}"
 
 passwd:
   users:
