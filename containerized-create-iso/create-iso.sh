@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euo pipefail
+mkdir build -p
 cd build
 
 # --- Download CoreOS ISO ---
@@ -63,3 +64,5 @@ xorriso -as mkisofs \
 # Sanity Checks
 echo "Check Rebuilt ISO contains .oci image"
 xorriso -indev coreos-diagnostic-final.iso -find /opt/images -exec lsdl
+cp coreos-diagnostic-final.iso ../host/coreos-diagnostic.iso
+

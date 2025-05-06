@@ -21,6 +21,17 @@ This project builds a bootable **Fedora CoreOS ISO** that:
 
 ---
 
+## 📦 Containerized Version
+```
+podman run --rm --interactive \
+  --security-opt label=disable \
+  --volume "$PWD":/work/host \
+  --workdir /work \
+  -e HOME="/work" \
+  quay.io/dds/discovery-iso:latest -c './create-iso.sh'
+```
+---
+
 ## 🚀 Quick Start
 
 ### 1. 🧰 Install Required Tools
