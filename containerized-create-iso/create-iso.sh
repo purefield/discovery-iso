@@ -1,23 +1,23 @@
 #!/bin/bash
 set -euo pipefail
 mkdir build -p
-cd build
 
 # --- Download CoreOS ISO ---
 if [ ! -e coreos.live.x86_64.iso ]; then
     curl -o coreos.live.x86_64.iso https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/latest/rhcos-live.x86_64.iso
 fi
+cp coreos.live.x86_64.iso build/coreos-diagnostic.iso
 
+cd build
 # --- Create Ignition config ---
 mkdir -p iso-overlay/opt/images
 cp $HOME/coreos-diagnostic.oci iso-overlay/opt/images/
 
-volid=$(isoinfo -d -i coreos.live.x86_64.iso | grep "Volume id" | awk -F ': ' '{print $2}')
+volid=$(isoinfo -d -i coreos-diagnostic.iso | grep "Volume id" | awk -F ': ' '{print $2}')
 sed -i "s/VOLID/${volid}/g" $HOME/diagnostic.bu
 butane $HOME/diagnostic.bu -p -o config.ign
 
 # --- Embed Ignition config into ISO ---
-cp coreos.live.x86_64.iso coreos-diagnostic.iso
 coreos-installer iso ignition embed -i config.ign coreos-diagnostic.iso
 
 # --- Inject overlay files ---
