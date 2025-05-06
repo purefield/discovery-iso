@@ -23,6 +23,7 @@ This project builds a bootable **Fedora CoreOS ISO** that:
 
 ## 📦 Containerized Version
 ```
+curl -o coreos.live.x86_64.iso https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/latest/rhcos-live.x86_64.iso
 podman run --rm --interactive \
   --security-opt label=disable \
   --volume "$PWD":/work/host \
