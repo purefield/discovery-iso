@@ -65,6 +65,4 @@ xorriso -as mkisofs \
 # Sanity Checks
 echo "Check Rebuilt ISO contains .oci image"
 xorriso -indev coreos-diagnostic-final.iso -find /opt/images -exec lsdl
-echo "Check Rebuilt ISO contains setup-network.sh"
-xorriso -indev coreos-diagnostic-final.iso -find /usr/local/bin -exec lsdl
 cp coreos-diagnostic-final.iso ../host/coreos-diagnostic.iso

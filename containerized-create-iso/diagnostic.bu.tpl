@@ -28,7 +28,7 @@ systemd:
           contents: |
             [Service]
             ExecStart=
-            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; echo "";  echo ""; echo "=== Diagnostics Output ==="; cat /var/facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; nmtui; echo "Configure networking using setup-network.sh"; echo; exec /bin/bash'
+            ExecStart=/usr/bin/bash -c 'clear; echo "===== Welcome to CoreOS Diagnostics Boot ====="; echo "";  echo ""; echo "=== Diagnostics Output ==="; cat /var/facts.yaml 2>/dev/null || echo "(No data available yet)"; echo ""; echo "Press ENTER to open nmtui..."; read; nmtui; echo "Configure networking using setup-network.sh primary-nic primary-address/prefix gateway vlanId bond-peer-nic"; echo; exec /bin/bash'
 
 
 storage:
